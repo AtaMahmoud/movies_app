@@ -62,7 +62,7 @@ mixin UserModel on ConnectedMovies {
   }
 
   Future<void> autoAuth() async {
-    isLoginLoading=true;
+    isLoginLoading = true;
     notifyListeners();
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -72,6 +72,20 @@ mixin UserModel on ConnectedMovies {
       Map<String, dynamic> result = await login(userName);
       if (result['status'] == 1) _userSubject.add(true);
     }
+
+    isLoginLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    isLoginLoading = true;
+    notifyListeners();
+
+    _userSubject.add(false);
+    authenticatedUser = null;
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.clear();
 
     isLoginLoading = false;
     notifyListeners();

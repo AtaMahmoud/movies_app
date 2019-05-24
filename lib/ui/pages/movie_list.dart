@@ -23,29 +23,43 @@ class MyMovieListState extends State<MovieList> {
                 fontFamily: 'Arvo',
                 fontWeight: FontWeight.bold)),
         elevation: 0.3,
-        
         backgroundColor: Colors.white70,
-        actions: <Widget>[],
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.exit_to_app),
+            label: Text('Log out'),
+            onPressed: () {
+              Navigator.of(context).pushReplacementNamed('/');
+              widget.mainModel.logout();
+            },
+          )
+        ],
       ),
       body: ScopedModelDescendant<MainModel>(
-        builder: (BuildContext context,Widget child,MainModel mainModel){
-          return mainModel.isLoading?Center(child: CircularProgressIndicator(),):Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-            itemCount: widget.mainModel.allMovies.length,
-            itemBuilder: (context, i) {
-              return FlatButton(
-                padding: const EdgeInsets.all(0.0),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return MovieDetailScreen(widget.mainModel.allMovies[i]);
-                  }));
-                },
-                child: MovieItem(widget.mainModel.allMovies[i]),
-                color: Colors.white,
-              );
-            }),
-      );
+        builder: (BuildContext context, Widget child, MainModel mainModel) {
+          return mainModel.isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ListView.builder(
+                      itemCount: widget.mainModel.allMovies.length,
+                      itemBuilder: (context, i) {
+                        return FlatButton(
+                          padding: const EdgeInsets.all(0.0),
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return MovieDetailScreen(
+                                  widget.mainModel.allMovies[i]);
+                            }));
+                          },
+                          child: MovieItem(widget.mainModel.allMovies[i]),
+                          color: Colors.white,
+                        );
+                      }),
+                );
         },
       ),
     );
