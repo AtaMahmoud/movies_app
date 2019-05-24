@@ -5,6 +5,6 @@ import '../models/movie.dart';
 mixin ConnectedMovies on Model {
   bool isLoading=false;
   User authenticatedUser;
-  List<Movie>allMovies;
-  List<Movie> favoriteMovies;
+  List<Movie>allMovies=List();
+  List<Movie> favoriteMovies=List();
 }
