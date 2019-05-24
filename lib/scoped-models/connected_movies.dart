@@ -4,7 +4,9 @@ import '../models/movie.dart';
 
 mixin ConnectedMovies on Model {
   bool isLoading=false;
+  bool isLoginLoading=false;
   User authenticatedUser;
   List<Movie>allMovies=List();
   List<Movie> favoriteMovies=List();
+
 }

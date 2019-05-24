@@ -45,7 +45,8 @@ mixin UserModel on ConnectedMovies {
       "user": {"username": "$userName"}
     });
 
-    http.Response response = await http.post("${Config.LOGIN}", body: body);
+    http.Response response = await http.post("${Config.LOGIN}",
+        body: body, headers: {'Content-Type': 'application/json'});
 
     final decodedResponse = json.decode(response.body);
     if (decodedResponse != null) {
@@ -61,7 +62,7 @@ mixin UserModel on ConnectedMovies {
   }
 
   Future<void> autoAuth() async {
-    isLoading = true;
+    isLoginLoading=true;
     notifyListeners();
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -72,7 +73,7 @@ mixin UserModel on ConnectedMovies {
       if (result['status'] == 1) _userSubject.add(true);
     }
 
-    isLoading = false;
+    isLoginLoading = false;
     notifyListeners();
   }
 

@@ -68,7 +68,7 @@ class _AuthPageState extends State<AuthPage> {
         builder: (BuildContext context) {
           return AlertDialog(
             content: Text(
-                'Do you want to create a new user with username: $userName?”'),
+                'Do you want to create a new user with username: $userName ?'),
             actions: <Widget>[
               FlatButton(
                 child: Text('Yes', style: TextStyle(color: Colors.blueAccent)),
@@ -92,30 +92,7 @@ class _AuthPageState extends State<AuthPage> {
         MaterialPageRoute(builder: (BuildContext context) => MainPage(widget.mainModel)));
   }
 
-  void _showCreatingUserDialouge() {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)),
-            ),
-            child: Container(
-              padding: EdgeInsets.all(20.0),
-              child: Row(
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text('Creating new user...')
-                ],
-              ),
-            ),
-          );
-        });
-  }
+  
 
   void _onSubmitButtonPressed(Function login, Function registerNewUser) async {
     if (!_formKey.currentState.validate()) {
@@ -132,7 +109,7 @@ class _AuthPageState extends State<AuthPage> {
         Map<String, dynamic> registrationResult =
             await registerNewUser(userName);
        
-        if (registrationResult['status'] == 0) {
+        if (registrationResult['status'] != 0) {
           _navigateToMainPage();
         }
       }

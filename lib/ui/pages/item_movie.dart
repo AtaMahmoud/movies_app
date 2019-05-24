@@ -1,10 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:movies_app/models/movie.dart';
 
 class MovieItem extends StatelessWidget {
   final Movie movie;
-  Color mainColor = const Color(0xff3C3261);
-  var imageUrl = 'https://image.tmdb.org/t/p/w500/';
+  final Color mainColor = const Color(0xff3C3261);
 
   MovieItem(
     this.movie,
@@ -23,15 +23,16 @@ class MovieItem extends StatelessWidget {
                 child: Container(
                   width: 70.0,
                   height: 70.0,
+                  child: CachedNetworkImage(
+                    imageUrl: movie.thumbnail==null?"":movie.thumbnail,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.0),
                     color: Colors.grey,
-                    image: DecorationImage(
-                        image: NetworkImage(movie.thumbnail==null
-                            ? imageUrl
-                            : movie.thumbnail),
-                        fit: BoxFit.cover),
                     boxShadow: [
                       BoxShadow(
                           color: mainColor,
@@ -40,8 +41,6 @@ class MovieItem extends StatelessWidget {
                     ]),
               ),
             ),
-
-           
             Expanded(
               child: Container(
                 margin: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
@@ -54,9 +53,7 @@ class MovieItem extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         color: mainColor),
                   ),
-
                   Padding(padding: EdgeInsets.all(2.0)),
-
                   Text(movie.description,
                       maxLines: 3,
                       style: TextStyle(
@@ -65,11 +62,13 @@ class MovieItem extends StatelessWidget {
                       ))
                 ], crossAxisAlignment: CrossAxisAlignment.start),
               ),
+            ),
+            IconButton(
+              icon: Icon(Icons.favorite, color: Colors.redAccent),
+              onPressed: () {},
             )
           ],
         ),
-
-       
         Container(
             width: 300.0,
             height: 0.5,

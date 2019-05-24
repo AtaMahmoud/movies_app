@@ -13,12 +13,7 @@ class MovieDetailScreen extends StatefulWidget {
 class _MovieDetailScreenState extends State<MovieDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    List<Color> colors = [
-      Colors.redAccent,
-      Colors.blueAccent,
-      Colors.greenAccent,
-      Colors.yellowAccent
-    ];
+    
     return Scaffold(
       body: SafeArea(
         top: false,
@@ -34,10 +29,10 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
                 title: innerBoxIsScrolled ? Text(widget.movie.name) : Text(''),
                 flexibleSpace: FlexibleSpaceBar(
                   background: CachedNetworkImage(
-                    imageUrl: widget.movie.thumbnail,
+                    imageUrl: widget.movie.thumbnail==null?"":widget.movie.thumbnail,
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
