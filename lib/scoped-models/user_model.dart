@@ -42,9 +42,7 @@ mixin UserModel on ConnectedMovies {
     Map<String, dynamic> result = {'status': 0};
 
     final body = json.encode({
-      {
-        "user": {"username": userName}
-      }
+      "user": {"username": "$userName"}
     });
 
     http.Response response = await http.post("${Config.LOGIN}", body: body);
@@ -67,7 +65,7 @@ mixin UserModel on ConnectedMovies {
     notifyListeners();
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    
+
     String userName = sharedPreferences.getString('username');
     if (userName != null) {
       Map<String, dynamic> result = await login(userName);
