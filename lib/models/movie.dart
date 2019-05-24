@@ -32,9 +32,9 @@ class Movie {
     description = json['description'];
     thumbnail = json['thumbnail'];
     if (json['gentres'] != null) {
-      gentres = new List<Genres>();
+      gentres =  List<Genres>();
       json['gentres'].forEach((v) {
-        gentres.add(new Genres.fromJson(v));
+        gentres.add( Genres.fromJson(v));
       });
     }
     createdAt = json['created_at'];
