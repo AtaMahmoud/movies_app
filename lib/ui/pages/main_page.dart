@@ -42,7 +42,10 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    widget.mainModel.getAllMovies();
+    widget.mainModel.getUserFavotiteMovies().then((_){
+      widget.mainModel.getAllMovies();
+    });
+    
   }
 
   void _onNavigationTapped(int pageIndex) {
@@ -68,7 +71,7 @@ class _MainPageState extends State<MainPage> {
         onPageChanged: _onPageChannged,
         children: <Widget>[
          MovieList(widget.mainModel),
-         MovieList(widget.mainModel),
+         MovieList(widget.mainModel,true),
         ],
       ),
     );

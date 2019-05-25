@@ -36,14 +36,14 @@ mixin MovieModel on ConnectedMovies {
     notifyListeners();
 
     favoriteMovies = List();
-
+     print(authenticatedUser.id.toString());
     http.Response response = await http
-        .get("${Config.LIST_USER_FAVORITES}:${authenticatedUser.id}/movies");
+        .get("${Config.LIST_USER_FAVORITES}${authenticatedUser.id}/movies");
 
     final decodedResponse = json.decode(response.body);
 
     if (decodedResponse.length != 0) {
-      for (var favMovie in decodedResponse.length) {
+      for (var favMovie in decodedResponse) {
         favoriteMovies.add(Movie.fromJson(favMovie, true));
       }
     }
@@ -65,8 +65,9 @@ mixin MovieModel on ConnectedMovies {
     _toggleFavoriteMode(movieId);
 
     favoriteMovies.add(favMovie);
+    print(authenticatedUser.id.toString());
     http.Response response = await http.get(
-        "${Config.LIST_USER_FAVORITES}:${authenticatedUser.id}/movies/:$movieId/favorite");
+        "${Config.LIST_USER_FAVORITES}${authenticatedUser.id}/movies/$movieId/favorite");
 
     if (response.statusCode != 200) {
       favoriteMovies.removeWhere((Movie movie) => movie.id == favMovie.id);
@@ -78,12 +79,12 @@ mixin MovieModel on ConnectedMovies {
         favoriteMovies.firstWhere((Movie movie) => movie.id == movieId);
 
     int index = favoriteMovies.indexWhere((Movie movie) => movie.id == movieId);
-
-    _toggleFavoriteMode(movieId);
-
+    
     favoriteMovies.removeAt(index);
+   _toggleFavoriteMode(movieId);
+   
     http.Response response = await http.get(
-        "${Config.LIST_USER_FAVORITES}:${authenticatedUser.id}/movies/:$movieId/unfavorite");
+        "${Config.LIST_USER_FAVORITES}${authenticatedUser.id}/movies/$movieId/unfavorite");
 
     if (response.statusCode != 200) {
       favoriteMovies.add(favMovie);

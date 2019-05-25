@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:movies_app/ui/pages/auth.dart';
 import 'package:movies_app/ui/pages/main_page.dart';
@@ -19,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+   
     _mainModel.autoAuth();
     _mainModel.userSubject.listen((bool isAuthenticated) {
       setState(() {
@@ -26,6 +29,8 @@ class _MyAppState extends State<MyApp> {
       });
     });
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
