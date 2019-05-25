@@ -7,6 +7,11 @@ import '../config.dart';
 import '../models/movie.dart';
 
 mixin MovieModel on ConnectedMovies {
+  bool _isFavoriteMovie(int movieId) {
+    int index = favoriteMovies.indexWhere((Movie movie) => movie.id == movieId);
+    return index == -1 ? false : true;
+  }
+
   Future<void> getAllMovies() async {
     isLoading = true;
     notifyListeners();
@@ -18,7 +23,7 @@ mixin MovieModel on ConnectedMovies {
 
     if (decodedResponse != null) {
       for (var movie in decodedResponse) {
-        allMovies.add(Movie.fromJson(movie));
+        allMovies.add(Movie.fromJson(movie, _isFavoriteMovie(movie['id'])));
       }
     }
 
@@ -39,53 +44,49 @@ mixin MovieModel on ConnectedMovies {
 
     if (decodedResponse.length != 0) {
       for (var favMovie in decodedResponse.length) {
-        favoriteMovies.add(Movie.fromJson(favMovie));
+        favoriteMovies.add(Movie.fromJson(favMovie, true));
       }
     }
 
     isLoading = false;
+    notifyListeners();
+  }
+
+  void _toggleFavoriteMode(int movieId) {
+    int movieIndex = allMovies.indexWhere((Movie movie) => movie.id == movieId);
+
+    allMovies[movieIndex].isFavorite = !allMovies[movieIndex].isFavorite;
     notifyListeners();
   }
 
   Future<void> setFavortieMovie(int movieId) async {
-    isLoading = true;
-    notifyListeners();
+    Movie favMovie = allMovies.firstWhere((Movie movie) => movie.id == movieId);
 
-    Movie favMovie =
-        allMovies.firstWhere((Movie movie) => movie.id == movieId);
-    int index = favoriteMovies.indexWhere((Movie movie) => movie.id == movieId);
+    _toggleFavoriteMode(movieId);
 
-    if (index == -1) {
-      favoriteMovies.add(favMovie);
-      http.Response response = await http.get(
-          "${Config.LIST_USER_FAVORITES}:${authenticatedUser.id}/movies/:$movieId/favorite");
+    favoriteMovies.add(favMovie);
+    http.Response response = await http.get(
+        "${Config.LIST_USER_FAVORITES}:${authenticatedUser.id}/movies/:$movieId/favorite");
 
-      if (response.statusCode != 200) {
-        favoriteMovies.removeWhere((Movie movie) => movie.id == favMovie.id);
-      }
+    if (response.statusCode != 200) {
+      favoriteMovies.removeWhere((Movie movie) => movie.id == favMovie.id);
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   Future<void> setUnFavortieMovie(int movieId) async {
-    isLoading = true;
-    notifyListeners();
-
     Movie favMovie =
         favoriteMovies.firstWhere((Movie movie) => movie.id == movieId);
-        
-    int index = favoriteMovies.indexWhere((Movie movie) => movie.id == movieId);
-    
-    if (index != -1) {
-      favoriteMovies.removeAt(index);
-      http.Response response = await http.get(
-          "${Config.LIST_USER_FAVORITES}:${authenticatedUser.id}/movies/:$movieId/unfavorite");
 
-      if (response.statusCode != 200) {
-        favoriteMovies.add(favMovie);
-      }
+    int index = favoriteMovies.indexWhere((Movie movie) => movie.id == movieId);
+
+    _toggleFavoriteMode(movieId);
+
+    favoriteMovies.removeAt(index);
+    http.Response response = await http.get(
+        "${Config.LIST_USER_FAVORITES}:${authenticatedUser.id}/movies/:$movieId/unfavorite");
+
+    if (response.statusCode != 200) {
+      favoriteMovies.add(favMovie);
     }
 
     isLoading = false;

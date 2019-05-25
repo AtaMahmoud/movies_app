@@ -5,10 +5,10 @@ import 'package:movies_app/models/movie.dart';
 class MovieItem extends StatelessWidget {
   final Movie movie;
   final Color mainColor = const Color(0xff3C3261);
+  final Function addToFavorite;
+  final Function removeFromFavorite;
 
-  MovieItem(
-    this.movie,
-  );
+  MovieItem({this.movie, this.addToFavorite, this.removeFromFavorite});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class MovieItem extends StatelessWidget {
                   width: 70.0,
                   height: 70.0,
                   child: CachedNetworkImage(
-                    imageUrl: movie.thumbnail==null?"":movie.thumbnail,
+                    imageUrl: movie.thumbnail == null ? "" : movie.thumbnail,
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,
@@ -64,8 +64,14 @@ class MovieItem extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.favorite, color: Colors.redAccent),
-              onPressed: () {},
+              icon: Icon(
+                  movie.isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.redAccent),
+              onPressed: () {
+                movie.isFavorite
+                    ? removeFromFavorite(movie.id)
+                    : addToFavorite(movie.id);
+              },
             )
           ],
         ),

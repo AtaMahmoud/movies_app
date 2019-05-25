@@ -11,7 +11,6 @@ class MovieList extends StatefulWidget {
 }
 
 class MyMovieListState extends State<MovieList> {
-  Color mainColor = const Color(0xff3C3261);
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +18,15 @@ class MyMovieListState extends State<MovieList> {
       appBar: AppBar(
         title: Text("Welcome ${widget.mainModel.authenticatedUser.username}",
             style: TextStyle(
-                color: mainColor,
+                color: Colors.white,
                 fontFamily: 'Arvo',
                 fontWeight: FontWeight.bold)),
         elevation: 0.3,
-        backgroundColor: Colors.white70,
+        
         actions: <Widget>[
           FlatButton.icon(
-            icon: Icon(Icons.exit_to_app),
-            label: Text('Log out'),
+            icon: Icon(Icons.exit_to_app,color: Colors.white,),
+            label: Text('Log out',style: TextStyle(color: Colors.white),),
             onPressed: () {
               Navigator.of(context).pushReplacementNamed('/');
               widget.mainModel.logout();
@@ -55,7 +54,11 @@ class MyMovieListState extends State<MovieList> {
                                   widget.mainModel.allMovies[i]);
                             }));
                           },
-                          child: MovieItem(widget.mainModel.allMovies[i]),
+                          child: MovieItem(
+                              movie: widget.mainModel.allMovies[i],
+                              addToFavorite: widget.mainModel.setFavortieMovie,
+                              removeFromFavorite:
+                                  widget.mainModel.setFavortieMovie),
                           color: Colors.white,
                         );
                       }),

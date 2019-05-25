@@ -32,7 +32,10 @@ class _MyAppState extends State<MyApp> {
     return ScopedModel<MainModel>(
       model: _mainModel,
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: Color(0xFF3B5998),
+          accentColor: Color(0xFF8B9DC3),
+        ),
         title: "Movie App",
         routes: {
           '/': (BuildContext context) {
