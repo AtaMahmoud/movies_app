@@ -16,6 +16,9 @@ mixin MovieModel on ConnectedMovies {
     isLoading = true;
     notifyListeners();
 
+    bool shouldTerminate=shouldTerminateProcess();
+    if(shouldTerminate)return;
+    
     allMovies = List();
 
     http.Response response = await http.get(Config.LIST_ALL_MOVIES);
@@ -34,6 +37,9 @@ mixin MovieModel on ConnectedMovies {
   Future<void> getUserFavotiteMovies() async {
     isLoading = true;
     notifyListeners();
+
+    bool shouldTerminate=shouldTerminateProcess();
+    if(shouldTerminate)return;
 
     favoriteMovies = List();
      print(authenticatedUser.id.toString());
@@ -60,6 +66,9 @@ mixin MovieModel on ConnectedMovies {
   }
 
   Future<void> setFavortieMovie(int movieId) async {
+    bool shouldTerminate=shouldTerminateProcess();
+    if(shouldTerminate)return;
+
     Movie favMovie = allMovies.firstWhere((Movie movie) => movie.id == movieId);
 
     _toggleFavoriteMode(movieId);
@@ -75,6 +84,9 @@ mixin MovieModel on ConnectedMovies {
   }
 
   Future<void> setUnFavortieMovie(int movieId) async {
+    bool shouldTerminate=shouldTerminateProcess();
+    if(shouldTerminate)return;
+
     Movie favMovie =
         favoriteMovies.firstWhere((Movie movie) => movie.id == movieId);
 

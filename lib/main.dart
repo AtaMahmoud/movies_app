@@ -1,12 +1,19 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:movies_app/ui/pages/auth.dart';
 import 'package:movies_app/ui/pages/main_page.dart';
+import 'package:movies_app/utilities/connection_checker.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './scoped-models/main.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  ConnectionStatusSingleton connectionStatus =
+      ConnectionStatusSingleton.getInstance();
+  connectionStatus.initialize();
+
+  runApp(new MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -17,11 +24,23 @@ class _MyAppState extends State<MyApp> {
   final _mainModel = MainModel();
 
   bool _isAuthenticatedUser = false;
+  StreamSubscription _connectionChangeStream;
+
+  bool isOnline = true;
 
   @override
   void initState() {
     super.initState();
-   
+    ConnectionStatusSingleton connectionStatus =
+        ConnectionStatusSingleton.getInstance();
+    connectionStatus.checkConnection().then((bool hasConnection) {
+      _mainModel.toggleIsConnected(hasConnection);
+    });
+    _connectionChangeStream =
+        connectionStatus.connectionChange.listen((dynamic hasConnection) {
+      _mainModel.toggleIsConnected(hasConnection);
+    });
+
     _mainModel.autoAuth();
     _mainModel.userSubject.listen((bool isAuthenticated) {
       setState(() {
@@ -30,7 +49,11 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  
+  @override
+  void dispose() {
+    _connectionChangeStream.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

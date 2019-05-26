@@ -4,6 +4,7 @@ import 'package:movies_app/scoped-models/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'item_movie.dart';
 import 'movie_details.dart';
+import './no_internet_connection.dart';
 
 class MovieList extends StatefulWidget {
   final MainModel mainModel;
@@ -72,38 +73,45 @@ class MyMovieListState extends State<MovieList> {
     );
   }
 
+
+ 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome ${widget.mainModel.authenticatedUser.username}",
-            style: TextStyle(
+        appBar: AppBar(
+          title: Text("Welcome ${widget.mainModel.authenticatedUser.username}",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Arvo',
+                  fontWeight: FontWeight.bold)),
+          elevation: 0.3,
+          actions: <Widget>[
+            FlatButton.icon(
+              icon: Icon(
+                Icons.exit_to_app,
                 color: Colors.white,
-                fontFamily: 'Arvo',
-                fontWeight: FontWeight.bold)),
-        elevation: 0.3,
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(
-              Icons.exit_to_app,
-              color: Colors.white,
-            ),
-            label: Text(
-              'Log out',
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () {
-              Navigator.of(context).pushReplacementNamed('/');
-              widget.mainModel.logout();
-            },
-          )
-        ],
-      ),
-      body: widget.displayFavorite
-          ? widget.mainModel.favoriteMovies.length == 0
-              ? _buildNoFavoriteMovies()
-              : _buildBody()
-          : _buildBody(),
-    );
+              ),
+              label: Text(
+                'Log out',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.of(context).pushReplacementNamed('/');
+                widget.mainModel.logout();
+              },
+            )
+          ],
+        ),
+        body: ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget child, MainModel mainModel) {
+            return mainModel.displayNoInternetConnection
+                ? NoInterNetConnection()
+                : widget.displayFavorite
+                    ? widget.mainModel.favoriteMovies.length == 0
+                        ? _buildNoFavoriteMovies()
+                        : _buildBody()
+                    : _buildBody();
+          },
+        ));
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './main_page.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:movies_app/scoped-models/main.dart';
+import './no_internet_connection.dart';
 
 class AuthPage extends StatefulWidget {
   final MainModel mainModel;
@@ -14,6 +15,8 @@ class _AuthPageState extends State<AuthPage> {
   String userName = "";
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  bool displayNoInternetConnection = false;
+
   Widget _buildUserNameFiled() {
     return TextFormField(
       onSaved: (String username) {
@@ -21,15 +24,14 @@ class _AuthPageState extends State<AuthPage> {
       },
       validator: (String value) {
         if (value.isEmpty || !RegExp(r"^[a-zA-Z0-9_]*").hasMatch(value)) {
-          return 'Please only introduce numbers, letters and underscore.';
+          return 'numbers, letters and underscore are only allowed.';
         }
       },
       maxLength: 20,
       decoration: InputDecoration(
-          border: InputBorder.none,
           icon: Icon(
             Icons.person,
-            color: Colors.black,
+            color: Theme.of(context).primaryColor,
           ),
           labelText: 'User name',
           labelStyle: TextStyle(color: Colors.black)),
@@ -38,14 +40,9 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildUserNameCard() {
-    return Card(
-      elevation: 1.0,
-      color: Colors.white70,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.0),
-        child: _buildUserNameFiled(),
-      ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
+      child: _buildUserNameFiled(),
     );
   }
 
@@ -53,9 +50,15 @@ class _AuthPageState extends State<AuthPage> {
     return ScopedModelDescendant(
         builder: (BuildContext context, Widget child, MainModel mainModel) {
       return RaisedButton(
-        padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(20.0),
+          color: Colors.blueAccent,
           shape: CircleBorder(),
-          child: mainModel.isLoading ? CircularProgressIndicator() : Text("Go"),
+          child: mainModel.isLoading
+              ? CircularProgressIndicator()
+              : Text(
+                  "Go",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
           onPressed: () =>
               _onSubmitButtonPressed(mainModel.login, mainModel.register));
     });
@@ -88,11 +91,9 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _navigateToMainPage() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (BuildContext context) => MainPage(widget.mainModel)));
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (BuildContext context) => MainPage(widget.mainModel)));
   }
-
-  
 
   void _onSubmitButtonPressed(Function login, Function registerNewUser) async {
     if (!_formKey.currentState.validate()) {
@@ -102,13 +103,14 @@ class _AuthPageState extends State<AuthPage> {
     _formKey.currentState.save();
 
     Map<String, dynamic> result = await login(userName);
+    if(result==null)return ;
+    
     if (result['status'] == 0) {
       bool useThisUserToRegister = await _showCreateUserDialog();
       if (useThisUserToRegister) {
-        
         Map<String, dynamic> registrationResult =
             await registerNewUser(userName);
-       
+
         if (registrationResult['status'] != 0) {
           _navigateToMainPage();
         }
@@ -118,23 +120,31 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(10),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              _buildUserNameCard(),
-              SizedBox(height: 10.0),
-              _buildGoButton(),
-            ],
-          ),
+  Widget _buildBody() {
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _buildUserNameCard(),
+            SizedBox(height: 10.0),
+            _buildGoButton(),
+          ],
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel mainModel) {
+        return mainModel.displayNoInternetConnection
+            ? NoInterNetConnection()
+            : _buildBody();
+      },
+    ));
   }
 }

@@ -18,6 +18,9 @@ mixin UserModel on ConnectedMovies {
     isLoading = true;
     notifyListeners();
 
+    bool shouldTerminate = shouldTerminateProcess();
+    if (shouldTerminate) return null;
+
     Map<String, dynamic> result = {'status': 0};
 
     http.Response response =
@@ -38,6 +41,9 @@ mixin UserModel on ConnectedMovies {
   Future<Map<String, dynamic>> register(String userName) async {
     isLoading = true;
     notifyListeners();
+
+    bool shouldTerminate = shouldTerminateProcess();
+    if (shouldTerminate) return null;
 
     Map<String, dynamic> result = {'status': 0};
 
@@ -65,11 +71,15 @@ mixin UserModel on ConnectedMovies {
     isLoginLoading = true;
     notifyListeners();
 
+     bool shouldTerminate=shouldTerminateProcess();
+    if(shouldTerminate)return;
+
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     String userName = sharedPreferences.getString('username');
     if (userName != null) {
       Map<String, dynamic> result = await login(userName);
+      if(result==null)return;
       if (result['status'] == 1) _userSubject.add(true);
     }
 

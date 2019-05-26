@@ -28,6 +28,8 @@ dependencies:
   rxdart: ^0.22.0
   cached_network_image: ^0.8.0
   shared_preferences: ^0.5.2+1
+  connectivity: ^0.4.3+1
+
 
 
 
