@@ -33,9 +33,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     ConnectionStatusSingleton connectionStatus =
         ConnectionStatusSingleton.getInstance();
-    connectionStatus.checkConnection().then((bool hasConnection) {
-      _mainModel.toggleIsConnected(hasConnection);
-    });
+    
     _connectionChangeStream =
         connectionStatus.connectionChange.listen((dynamic hasConnection) {
       _mainModel.toggleIsConnected(hasConnection);

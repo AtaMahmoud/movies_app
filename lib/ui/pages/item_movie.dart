@@ -25,7 +25,9 @@ class MovieItem extends StatelessWidget {
                   height: 70.0,
                   child: CachedNetworkImage(
                     imageUrl: movie.thumbnail == null ? "" : movie.thumbnail,
-                    placeholder: (context, url) => CircularProgressIndicator(),
+                    placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(),
+                        ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,
                   ),
