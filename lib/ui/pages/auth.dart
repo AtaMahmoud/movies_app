@@ -23,7 +23,7 @@ class _AuthPageState extends State<AuthPage> {
         userName = username;
       },
       validator: (String value) {
-        if (value.isEmpty || !RegExp(r"^[a-zA-Z0-9_]*").hasMatch(value)) {
+        if (value.isEmpty && !RegExp(r"^[a-zA-Z0-9_]*").hasMatch(value)) {
           return 'numbers, letters and underscore are only allowed.';
         }
       },
