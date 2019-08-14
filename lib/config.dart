@@ -4,5 +4,12 @@ class Config {
   static const String REGISTER = '$BASE_URL/users.json';
   static const String LOGOUT = '$BASE_URL/users/logout.json';
   static const String LIST_ALL_MOVIES = '$BASE_URL/movies.json';
-  static const String LIST_USER_FAVORITES = '$BASE_URL/api/users/';
+
+  static String favoriteMovie(int movieId) {
+    return "$BASE_URL/movies/$movieId/favorite.json";
+  }
+
+  static String unfavoriteMovie(int movieId) {
+    return "$BASE_URL/movies/$movieId/unfavorite.json";
+  }
 }

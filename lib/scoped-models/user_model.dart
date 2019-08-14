@@ -78,11 +78,17 @@ mixin UserModel on ConnectedMovies {
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
-    String userName = sharedPreferences.getString('username');
-    if (userName != null) {
-      Map<String, dynamic> result = await login(userName);
-      if (result == null) return;
-      if (result['status'] == 1) _userSubject.add(true);
+    if (sharedPreferences.containsKey("id")) {
+      Map<String, dynamic> userMap = {
+        "id": sharedPreferences.getInt("id"),
+        "username": sharedPreferences.getString("username"),
+        "token": sharedPreferences.getString("token"),
+        "url": sharedPreferences.getString("url")
+      };
+
+      authenticatedUser = User.fromJson(userMap);
+
+      _userSubject.add(true);
     }
 
     isLoginLoading = false;
@@ -114,7 +120,10 @@ mixin UserModel on ConnectedMovies {
   Future<void> _saveToSharedPrefs(Map<String, dynamic> userMap) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     for (var key in userMap.keys) {
-      await sharedPreferences.setString(key, userMap['key']);
+      if (key == "id")
+        await sharedPreferences.setInt(key, userMap[key]);
+      else
+        await sharedPreferences.setString(key, userMap[key]);
     }
   }
 }

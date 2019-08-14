@@ -7,12 +7,6 @@ import '../config.dart';
 import '../models/movie.dart';
 
 mixin MovieModel on ConnectedMovies {
-  bool _isFavoriteMovie(String movieName) {
-    int index =
-        favoriteMovies.indexWhere((Movie movie) => movie.name == movieName);
-    return index == -1 ? false : true;
-  }
-
   Future<void> getAllMovies() async {
     isLoading = true;
     notifyListeners();
@@ -71,10 +65,14 @@ mixin MovieModel on ConnectedMovies {
     _toggleFavoriteMode(movieId);
 
     favoriteMovies.add(favMovie);
-    print(authenticatedUser.id.toString());
-    http.Response response = await http.get(
-        "${Config.LIST_USER_FAVORITES}${authenticatedUser.id}/movies/$movieId/favorite");
 
+    http.Response response = await http.post(Config.favoriteMovie(movieId),
+        headers: {"Authorization": "Bearer ${authenticatedUser.token}"});
+
+    print(Config.favoriteMovie(movieId));
+    print({"Authorization": "Bearer ${authenticatedUser.token}"}.toString());
+    print(response.statusCode);
+    
     if (response.statusCode != 200) {
       favoriteMovies.removeWhere((Movie movie) => movie.id == favMovie.id);
     }
@@ -95,8 +93,12 @@ mixin MovieModel on ConnectedMovies {
     favoriteMovies.removeAt(index);
     _toggleFavoriteMode(movieId);
 
-    http.Response response = await http.get(
-        "${Config.LIST_USER_FAVORITES}${authenticatedUser.id}/movies/$movieId/unfavorite");
+    http.Response response = await http.post(Config.unfavoriteMovie(movieId),
+        headers: {"Authorization": "Bearer ${authenticatedUser.token}"});
+
+    print(Config.unfavoriteMovie(movieId));
+    print({"Authorization": "Bearer ${authenticatedUser.token}"}.toString());
+    print(response.statusCode);
 
     if (response.statusCode != 200) {
       favoriteMovies.add(favMovie);
