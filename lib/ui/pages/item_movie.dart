@@ -26,8 +26,8 @@ class MovieItem extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: movie.thumbnail == null ? "" : movie.thumbnail,
                     placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                      child: CircularProgressIndicator(),
+                    ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     fit: BoxFit.cover,
                   ),
@@ -56,7 +56,7 @@ class MovieItem extends StatelessWidget {
                         color: mainColor),
                   ),
                   Padding(padding: EdgeInsets.all(2.0)),
-                  Text(movie.description,
+                  Text(movie.description == null ? "" : movie.description,
                       maxLines: 3,
                       style: TextStyle(
                         fontFamily: 'Arvo',

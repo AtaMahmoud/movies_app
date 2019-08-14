@@ -12,7 +12,7 @@ class User {
     token = json['token'];
     profileUrl = json['url'];
   }
-
+  //TODO : fix the problem of storeing int in shared Prefs
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       "id": id,

@@ -25,12 +25,17 @@ mixin MovieModel on ConnectedMovies {
 
     allMovies = List();
 
-    http.Response response = await http.get(Config.LIST_ALL_MOVIES);
-    final decodedResponse = json.decode(response.body);
+    http.Response response = await http.get(Config.LIST_ALL_MOVIES,
+        headers: {"Authorization": "Bearer ${authenticatedUser.token}"});
 
-    if (decodedResponse != null) {
-      for (var movie in decodedResponse) {
-        allMovies.add(Movie.fromJson(movie, _isFavoriteMovie(movie['name'])));
+    if (response.statusCode == 200) {
+      final decodedResponse = json.decode(response.body);
+
+      if (decodedResponse != null) {
+        for (var movie in decodedResponse['movies']) {
+          allMovies
+              .add(Movie.fromJson(movie['movie'], authenticatedUser.username));
+        }
       }
     }
 
@@ -40,7 +45,11 @@ mixin MovieModel on ConnectedMovies {
 
   Future<void> getUserFavotiteMovies() async {
     favoriteMovies = List();
-   
+
+    for (var movie in allMovies) {
+      if (movie.isFavorite) favoriteMovies.add(movie);
+    }
+    notifyListeners();
   }
 
   void _toggleFavoriteMode(int movieId) {
