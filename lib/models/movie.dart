@@ -1,4 +1,3 @@
-import './genre.dart';
 
 class Movie {
   int id;
@@ -8,7 +7,7 @@ class Movie {
   String mainStar;
   String description;
   String thumbnail;
-  List<Genres> gentres;
+  List<String> gentres;
   int createdAt;
   int updatedAt;
   bool isFavorite;
@@ -32,13 +31,8 @@ class Movie {
     director = json['director'];
     mainStar = json['main_star'];
     description = json['description'];
-    thumbnail = json['thumbnail'];
-    if (json['gentres'] != null) {
-      gentres = List<Genres>();
-      json['gentres'].forEach((v) {
-        gentres.add(Genres.fromJson(v));
-      });
-    }
+    thumbnail = json['thumbnail']['url'];
+    gentres = json['genres'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     isFavorite = isFavoriteMovie;

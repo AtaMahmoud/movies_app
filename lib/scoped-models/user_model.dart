@@ -23,14 +23,17 @@ mixin UserModel on ConnectedMovies {
 
     Map<String, dynamic> result = {'status': 0};
 
-    http.Response response =
-        await http.get("${Config.LOGIN}?username=$userName");
-    final decodedResponse = json.decode(response.body);
-    if (decodedResponse.length != 0) {
-      authenticatedUser = User.fromJson(decodedResponse[0]);
+    http.Response response = await http.post(Config.LOGIN,
+        body: json.encode({
+          'user': {'username': userName}
+        }),
+        headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      final decodedResponse = json.decode(response.body);
+
+      authenticatedUser = User.fromJson(decodedResponse);
+      await _saveToSharedPrefs(authenticatedUser.toMap());
       result['status'] = 1;
-      await _saveToSharedPrefs('id', authenticatedUser.id);
-      await _saveToSharedPrefs('username', authenticatedUser.username);
     }
 
     isLoading = false;
@@ -51,15 +54,14 @@ mixin UserModel on ConnectedMovies {
       "user": {"username": "$userName"}
     });
 
-    http.Response response = await http.post("${Config.LOGIN}",
+    http.Response response = await http.post("${Config.REGISTER}",
         body: body, headers: {'Content-Type': 'application/json'});
 
-    final decodedResponse = json.decode(response.body);
-    if (decodedResponse != null) {
+    if (response.statusCode == 200) {
+      final decodedResponse = json.decode(response.body);
       authenticatedUser = User.fromJson(decodedResponse);
+      await _saveToSharedPrefs(authenticatedUser.toMap());
       result['status'] = 1;
-      await _saveToSharedPrefs('id', authenticatedUser.id);
-      await _saveToSharedPrefs('username', authenticatedUser.username);
     }
 
     isLoading = false;
@@ -71,15 +73,15 @@ mixin UserModel on ConnectedMovies {
     isLoginLoading = true;
     notifyListeners();
 
-     bool shouldTerminate=shouldTerminateProcess();
-    if(shouldTerminate)return;
+    bool shouldTerminate = shouldTerminateProcess();
+    if (shouldTerminate) return;
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     String userName = sharedPreferences.getString('username');
     if (userName != null) {
       Map<String, dynamic> result = await login(userName);
-      if(result==null)return;
+      if (result == null) return;
       if (result['status'] == 1) _userSubject.add(true);
     }
 
@@ -91,6 +93,7 @@ mixin UserModel on ConnectedMovies {
     isLoginLoading = true;
     notifyListeners();
 
+    await _logout();
     _userSubject.add(false);
     authenticatedUser = null;
 
@@ -101,12 +104,17 @@ mixin UserModel on ConnectedMovies {
     notifyListeners();
   }
 
-  Future<void> _saveToSharedPrefs(String key, value) async {
+  Future<void> _logout() async {
+    final response = await http.post(Config.LOGOUT,
+        headers: {"Authorization": "Bearer ${authenticatedUser.token}"});
+
+    print(response.body);
+  }
+
+  Future<void> _saveToSharedPrefs(Map<String, dynamic> userMap) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    if (value is int) {
-      sharedPreferences.setInt(key, value);
-    } else {
-      sharedPreferences.setString(key, value);
+    for (var key in userMap.keys) {
+      await sharedPreferences.setString(key, userMap['key']);
     }
   }
 }

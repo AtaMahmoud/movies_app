@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
       _mainModel.toggleIsConnected(hasConnection);
     });
 
-    _mainModel.autoAuth();
+  //  _mainModel.autoAuth();
     _mainModel.userSubject.listen((bool isAuthenticated) {
       setState(() {
         _isAuthenticatedUser = isAuthenticated;

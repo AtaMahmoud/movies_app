@@ -1,15 +1,24 @@
 class User {
   int id;
   String username;
-  int createdAt;
-  int updatedAt;
+  String token;
+  String profileUrl;
 
-  User({this.id, this.username, this.createdAt, this.updatedAt});
+  User({this.id, this.username, this.profileUrl, this.token});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     username = json['username'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    token = json['token'];
+    profileUrl = json['url'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      "id": id,
+      "username": username,
+      "token": token,
+      "url": profileUrl
+    };
   }
 }

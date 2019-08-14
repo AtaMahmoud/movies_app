@@ -42,8 +42,8 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    widget.mainModel.getUserFavotiteMovies().then((_){
-      widget.mainModel.getAllMovies();
+    widget.mainModel.getAllMovies().then((_){
+      widget.mainModel.getUserFavotiteMovies();
     });
     
   }

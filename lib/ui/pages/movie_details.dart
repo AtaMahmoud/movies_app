@@ -63,18 +63,16 @@ class _MovieDetailScreenState extends State<MovieDetailScreen> {
           Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0)),
           Wrap(
             children: <Widget>[
-              if (widget.movie.gentres.length != 0)
-                for (var genre in widget.movie.gentres)
-                  Container(
-                    child: Chip(
-                      backgroundColor: Colors.blueAccent,
-                      label: Text(
-                        genre.name,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    margin: EdgeInsets.only(left: 5.0),
-                  )
+              Container(
+                child: Chip(
+                  backgroundColor: Colors.blueAccent,
+                  label: Text(
+                    widget.movie.gentres.toString(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                margin: EdgeInsets.only(left: 5.0),
+              )
             ],
           ),
           Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0)),

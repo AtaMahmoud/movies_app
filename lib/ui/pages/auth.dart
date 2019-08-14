@@ -26,6 +26,8 @@ class _AuthPageState extends State<AuthPage> {
         if (value.isEmpty && !RegExp(r"^[a-zA-Z0-9_]*").hasMatch(value)) {
           return 'numbers, letters and underscore are only allowed.';
         }
+
+        return null;
       },
       maxLength: 20,
       decoration: InputDecoration(

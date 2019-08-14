@@ -7,8 +7,9 @@ import '../config.dart';
 import '../models/movie.dart';
 
 mixin MovieModel on ConnectedMovies {
-  bool _isFavoriteMovie(int movieId) {
-    int index = favoriteMovies.indexWhere((Movie movie) => movie.id == movieId);
+  bool _isFavoriteMovie(String movieName) {
+    int index =
+        favoriteMovies.indexWhere((Movie movie) => movie.name == movieName);
     return index == -1 ? false : true;
   }
 
@@ -16,12 +17,12 @@ mixin MovieModel on ConnectedMovies {
     isLoading = true;
     notifyListeners();
 
-    bool shouldTerminate=shouldTerminateProcess();
-    if(shouldTerminate){
+    bool shouldTerminate = shouldTerminateProcess();
+    if (shouldTerminate) {
       notifyListeners();
       return;
     }
-    
+
     allMovies = List();
 
     http.Response response = await http.get(Config.LIST_ALL_MOVIES);
@@ -29,7 +30,7 @@ mixin MovieModel on ConnectedMovies {
 
     if (decodedResponse != null) {
       for (var movie in decodedResponse) {
-        allMovies.add(Movie.fromJson(movie, _isFavoriteMovie(movie['id'])));
+        allMovies.add(Movie.fromJson(movie, _isFavoriteMovie(movie['name'])));
       }
     }
 
@@ -38,30 +39,8 @@ mixin MovieModel on ConnectedMovies {
   }
 
   Future<void> getUserFavotiteMovies() async {
-    isLoading = true;
-    notifyListeners();
-
-    bool shouldTerminate=shouldTerminateProcess();
-    if(shouldTerminate){
-      notifyListeners();
-      return;
-    }
-
     favoriteMovies = List();
-     print(authenticatedUser.id.toString());
-    http.Response response = await http
-        .get("${Config.LIST_USER_FAVORITES}${authenticatedUser.id}/movies");
-
-    final decodedResponse = json.decode(response.body);
-
-    if (decodedResponse.length != 0) {
-      for (var favMovie in decodedResponse) {
-        favoriteMovies.add(Movie.fromJson(favMovie, true));
-      }
-    }
-
-    isLoading = false;
-    notifyListeners();
+   
   }
 
   void _toggleFavoriteMode(int movieId) {
@@ -72,12 +51,11 @@ mixin MovieModel on ConnectedMovies {
   }
 
   Future<void> setFavortieMovie(int movieId) async {
-    bool shouldTerminate=shouldTerminateProcess();
-    if(shouldTerminate){
+    bool shouldTerminate = shouldTerminateProcess();
+    if (shouldTerminate) {
       notifyListeners();
       return;
     }
-   
 
     Movie favMovie = allMovies.firstWhere((Movie movie) => movie.id == movieId);
 
@@ -94,8 +72,8 @@ mixin MovieModel on ConnectedMovies {
   }
 
   Future<void> setUnFavortieMovie(int movieId) async {
-    bool shouldTerminate=shouldTerminateProcess();
-    if(shouldTerminate){
+    bool shouldTerminate = shouldTerminateProcess();
+    if (shouldTerminate) {
       notifyListeners();
       return;
     }
@@ -104,10 +82,10 @@ mixin MovieModel on ConnectedMovies {
         favoriteMovies.firstWhere((Movie movie) => movie.id == movieId);
 
     int index = favoriteMovies.indexWhere((Movie movie) => movie.id == movieId);
-    
+
     favoriteMovies.removeAt(index);
-   _toggleFavoriteMode(movieId);
-   
+    _toggleFavoriteMode(movieId);
+
     http.Response response = await http.get(
         "${Config.LIST_USER_FAVORITES}${authenticatedUser.id}/movies/$movieId/unfavorite");
 
